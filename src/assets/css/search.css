@@ -1,0 +1,81 @@
+.search {
+    font-size: 20px;
+}
+.search .sea_input{
+    display: inline-block;
+    padding: .3rem .2rem;
+    width: 100%;
+    border-bottom: 1px solid #ccc;
+}
+.search .sea_input .sea_inputcover{
+    width: 100%;
+    height: .6rem;
+    padding: 0 .6rem;
+    box-sizing: border-box;
+    background: #ebecec;
+    border-radius: .6rem;
+
+    position: relative;
+}
+.search .sea_input .sea_inputcover .sea_find{
+    background: #ebecec;
+    height: .6rem;
+    width: 85%;
+    line-height: .36rem;
+    background: rgba(0,0,0,0);
+    font-size: .28rem;
+    color: #333;
+    position: absolute;
+    top: 0;
+}
+.search .sea_input .sea_inputcover .sea_fdico{
+    position: absolute;
+    left: 0;
+    top: .18rem;
+    margin: 0 .16rem;
+    vertical-align: middle;
+
+    width: .26rem;
+    height: .26rem;
+    background: url("../images/bigmerror.svg") ;
+}
+.search .sea_input .sea_inputcover .sea_close{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: .6rem;
+    height: .6rem;
+    line-height: .56rem;
+    text-align: center;
+}
+.search .sea_input .sea_inputcover .sea_close .sea_closeIco{
+    display: none;
+    position: absolute;
+    left: 0;
+    top: .18rem;
+    vertical-align: middle;
+    width: .28rem;
+    height: .28rem;
+    background: url("../images/error.svg")
+}
+.search .sea_hot{
+    margin: .2rem 0.2rem .14rem;
+}
+.search .sea_hot h6{
+    font-size: 12px;
+    line-height: 12px;
+    color: #666;
+}
+.search .sea_hot .hot_tag{
+    position: relative;
+    display: inline-block;
+    height: .64rem;
+    margin-right: .16rem;
+    margin-bottom: .16rem;
+    padding: 0 .28rem;
+    font-size: .28rem;
+    line-height: .64rem;
+    color: #333;
+    border: 1px solid #000;
+    border-radius: .6rem;
+}
