@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import "../../assets/css/search.css";
 import { from } from "_array-flatten@2.1.2@array-flatten";
-class Serch extends Component {
+class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -165,4 +165,4 @@ class Serch extends Component {
         );
     }
 }
-export default Serch;
+export default Search;
