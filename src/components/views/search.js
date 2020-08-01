@@ -6,6 +6,28 @@ class Serch extends Component {
         super(props);
         this.state = {
             findMsg: "",
+            rankList: [
+                {
+                    id: 1,
+                    songName: "爸爸妈妈"
+                },
+                {
+                    id: 2,
+                    songName: "海底"
+                },
+                {
+                    id: 3,
+                    songName: "心之语"
+                },
+                {
+                    id: 4,
+                    songName: "你好再见"
+                },
+                {
+                    id: 5,
+                    songName: "苏格拉底"
+                }
+            ],
             findText: [
                 {
                     id: 1,
@@ -35,26 +57,37 @@ class Serch extends Component {
         };
         this.error_ico = React.createRef();
         this.find_input = React.createRef();
+        this.sea_list = React.createRef();
+        this.sea_hot = React.createRef();
     }
-    
+    goPlay(id, name) {
+        this.props.history.push(`/play?id=${id}&name=${name}`);
+    }
     //根据是否输入内容判断是否出现取消符号
     errorIco(e) {
         this.setState({
-            findMsg:e.target.value
-        })
+            findMsg: e.target.value
+        });
         if (!this.find_input.current.value == "") {
             this.error_ico.current.style.display = "block";
-        }else{
+            this.sea_list.current.style.display = "block";
+            this.sea_hot.current.style.display = "none";
+        } else {
             this.error_ico.current.style.display = "none";
+            this.sea_list.current.style.display = "none";
+            this.sea_hot.current.style.display = "block";
         }
     }
     //点击errorico，清除输入框的值
-    errorClear(){
+    errorClear() {
         this.setState({
-            findMsg:""
-        })
+            findMsg: ""
+        });
         this.error_ico.current.style.display = "none";
-        this.find_input.current.value=""
+        this.find_input.current.value = "";
+
+        this.sea_list.current.style.display = "none";
+        this.sea_hot.current.style.display = "block";
     }
     //点击热门搜索标签添加到搜索栏
     findAdd(id) {
@@ -62,10 +95,13 @@ class Serch extends Component {
         this.setState({
             findMsg: this.state.findText[id - 1].msg
         });
-        this.find_input.current.value=this.state.findText[id - 1].msg
+        this.find_input.current.value = this.state.findText[id - 1].msg;
+
+        this.sea_list.current.style.display = "block";
+        this.sea_hot.current.style.display = "none";
     }
     render() {
-        const { findText} = this.state;
+        const { findText, rankList } = this.state;
         return (
             <div className="search">
                 <form className="sea_input">
@@ -87,7 +123,7 @@ class Serch extends Component {
                         </div>
                     </div>
                 </form>
-                <div className="sea_hot">
+                <div className="sea_hot" ref={this.sea_hot}>
                     <h6>热门搜索</h6>
                     <ul>
                         {findText.map(item => {
@@ -98,6 +134,28 @@ class Serch extends Component {
                                     key={item.id}
                                 >
                                     {item.msg}
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+                <div className="sea_list" ref={this.sea_list}>
+                    <ul>
+                        {rankList.map(item => {
+                            return (
+                                <li
+                                    className="songList"
+                                    key={item.id}
+                                    onClick={this.goPlay.bind(
+                                        this,
+                                        item.id,
+                                        item.songName
+                                    )}
+                                >
+                                    <div className="songRight">
+                                        {item.songName}
+                                        <span className="icon_play"></span>
+                                    </div>
                                 </li>
                             );
                         })}
