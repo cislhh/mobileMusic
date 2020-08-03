@@ -60,9 +60,24 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 0.4rem
+    padding-left: 0.4rem;
+    font-size: 15px;
+    line-height: 15px;
+    white-space:nowrap;
+       overflow:hidden;
+       text-overflow:ellipsis;
+       position: relative;
 }
-
+.new_music .songList .songRight .songArtist{
+    font-size: 12px;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+    position: absolute;
+    bottom: 0.02rem;
+}
 .new_music .songList .songRight .icon_play {
     background: url("../images/music_sprite.png") no-repeat;
     background-size: 3.32rem 1.94rem;

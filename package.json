@@ -34,6 +34,9 @@
     ]
   },
   "devDependencies": {
-    "antd": "^4.5.1"
+    "antd": "^4.5.1",
+    "axios": "^0.19.2",
+    "renux": "^1.0.10",
+    "swiper": "^6.1.1"
   }
 }

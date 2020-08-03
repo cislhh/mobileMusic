@@ -1,66 +1,61 @@
 import React, { Component } from "react";
 
+// //引入swipercss
+// import 'swiper/css/swiper.min.css'
+// //引入推荐组件的css
+// import '../assets/css/recommend.css'
+// import 'swiper/js/swiper.min.js'
+// //调用swiper插件
+// import Swiper from 'swiper'
+
+
+import { personalized, banner, getNewSongs } from '../../util/axios'
 import "../../assets/css/home.css";
+import axios from "axios";
 class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
             // 歌单列表
-            rankList: [
-                {
-                    id: 1,
-                    songName: "爸爸妈妈"
-                },
-                {
-                    id: 2,
-                    songName: "海底"
-                },
-                {
-                    id: 3,
-                    songName: "心之语"
-                },
-                {
-                    id: 4,
-                    songName: "你好再见"
-                },
-                {
-                    id: 5,
-                    songName: "苏格拉底"
-                }
-            ],
-            remdList: [
-                {
-                    id: 1,
-                    imgUrl: require("../../assets/images/1.jpg"),
-                    msg: "放空时间到那个世界"
-                },
-                {
-                    id: 2,
-                    imgUrl: require("../../assets/images/2.jpg"),
-                    msg: "放空时间到那个世界"
-                },
-                {
-                    id: 3,
-                    imgUrl: require("../../assets/images/3.jpg"),
-                    msg: "放空时间到那个世界"
-                },
-                {
-                    id: 4,
-                    imgUrl: require("../../assets/images/4.jpg"),
-                    msg: "放空时间到那个世界"
-                },
-                {
-                    id: 5,
-                    imgUrl: require("../../assets/images/5.jpg"),
-                    msg: "放空时间到那个世界"
-                },
-                {
-                    id: 6,
-                    imgUrl: require("../../assets/images/6.jpg"),
-                    msg: "放空时间到那个世界"
-                }
-            ]
+            rankList: [],
+            remdList: [],
+            bannerList: [],
         };
+    }
+    componentDidMount(){
+        axios.all([personalized({limit:6}),getNewSongs(), banner()])
+        .then(axios.spread((remdList,rankList,bannerList)=>{
+            if(remdList.code===200){
+                this.setState({
+                    remdList:remdList.result
+                })
+            }
+            
+            if(remdList.code===200){
+                this.setState({
+                    rankList:rankList.result
+                })
+            }
+// console.log(bannerList)
+            // //获取轮播图
+            // if (bannerList.code === 200) {
+            //     //可以通过filter 对数组进行过滤
+            //     let banners = bannerList.banners.filter((item, i) => i < 4)
+            //     this.setState({
+            //         bannerList: banners
+            //     }, () => {
+            //         let swiper = new Swiper('.swiper-container', {
+            //             autoplay: {
+            //                 delay: 2000,
+            //             },
+            //             loop: true,
+            //             pagination: {
+            //                 el: '.swiper-pagination',
+            //             },
+            //         });
+            //     })
+            // }
+        }))
     }
     //动态路由跳转方法
     goPlay(id,name) {
@@ -76,8 +71,8 @@ class Home extends Component {
                         {remdList.map(item => {
                             return (
                                 <li key={item.id}>
-                                    <img src={item.imgUrl} alt="" />
-                                    <p>{item.msg}</p>
+                                    <img src={item.picUrl} alt="" />
+                                    <p>{item.name}</p>
                                 </li>
                             );
                         })}
@@ -98,7 +93,16 @@ class Home extends Component {
                                     )}
                                 >
                                     <div className="songRight">
-                                        {item.songName}
+                                        {item.name}
+                                        <div className="songArtist">
+                                        {
+                                                    item.song.artists ?
+                                                        item.song.artists.map(item => {
+                                                        return <span key={item.id}>{item.name}</span>
+                                                        })
+                                                        : ''
+                                                }-{item.song.album.name}
+                                        </div>
                                         <span className="icon_play"></span>
                                     </div>
                                 </li>

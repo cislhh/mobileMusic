@@ -1,64 +1,22 @@
 import React, { Component } from "react";
 import "../../assets/css/search.css";
-import { from } from "_array-flatten@2.1.2@array-flatten";
+//调取接口地址
+import { searchHot, searchInfo } from "../../util/axios";
 class Search extends Component {
     constructor(props) {
         super(props);
         this.state = {
             findMsg: "",
-            rankList: [
-                {
-                    id: 1,
-                    songName: "爸爸妈妈"
-                },
-                {
-                    id: 2,
-                    songName: "海底"
-                },
-                {
-                    id: 3,
-                    songName: "心之语"
-                },
-                {
-                    id: 4,
-                    songName: "你好再见"
-                },
-                {
-                    id: 5,
-                    songName: "苏格拉底"
-                }
-            ],
-            findText: [
-                {
-                    id: 1,
-                    msg: "无滤镜"
-                },
-                {
-                    id: 2,
-                    msg: "周杰伦"
-                },
-                {
-                    id: 3,
-                    msg: "祖娅纳惜"
-                },
-                {
-                    id: 4,
-                    msg: "一曲终将万骨枯"
-                },
-                {
-                    id: 5,
-                    msg: "上半年流行音乐排行榜"
-                },
-                {
-                    id: 6,
-                    msg: "2020毕业音乐会"
-                }
-            ]
+            rankList: [],
+            findText: []
         };
         this.error_ico = React.createRef();
         this.find_input = React.createRef();
         this.sea_list = React.createRef();
         this.sea_hot = React.createRef();
+    }
+    componentDidMount() {
+        this.get_search_hot();
     }
     goPlay(id, name) {
         this.props.history.push(`/play?id=${id}&name=${name}`);
@@ -78,10 +36,11 @@ class Search extends Component {
             this.sea_hot.current.style.display = "block";
         }
     }
-    //点击errorico，清除输入框的值
+    //点击errorico，清除值
     errorClear() {
         this.setState({
-            findMsg: ""
+            findMsg: "",
+            rankList: [],
         });
         this.error_ico.current.style.display = "none";
         this.find_input.current.value = "";
@@ -93,12 +52,38 @@ class Search extends Component {
     findAdd(id) {
         this.error_ico.current.style.display = "block";
         this.setState({
-            findMsg: this.state.findText[id - 1].msg
+            findMsg: this.state.findText[id].first
         });
-        this.find_input.current.value = this.state.findText[id - 1].msg;
+        this.find_input.current.value = this.state.findText[id].first;
 
         this.sea_list.current.style.display = "block";
         this.sea_hot.current.style.display = "none";
+    }
+    //封装一个搜索事件
+    goSearch(keywords) {
+        //给input赋值
+        this.find_input.current.value = keywords
+        //调取搜索接口
+        searchInfo({ keywords })
+            .then(res => {
+                if (res.code == 200) {
+                    console.log(res, '搜索结果')
+                    this.setState({
+                        rankList: res.result.songs
+                    })
+                }
+            })
+    }
+    //获取热门搜索事件
+    get_search_hot() {
+        searchHot().then(res => {
+            if (res.code == 200) {
+                this.setState({
+                    findText: res.result.hots
+                });
+            }
+        });
+        // console.log(this.state.findText, '热门标签')
     }
     render() {
         const { findText, rankList } = this.state;
@@ -126,14 +111,18 @@ class Search extends Component {
                 <div className="sea_hot" ref={this.sea_hot}>
                     <h6>热门搜索</h6>
                     <ul>
-                        {findText.map(item => {
+                        {findText.map((item,si) => {
                             return (
                                 <li
-                                    onClick={this.findAdd.bind(this, item.id)}
                                     className="hot_tag"
-                                    key={item.id}
+                                    key={item.first}
+
+                                    onClick={()=>{
+                                        this.findAdd(si);
+                                        this.goSearch(item.first);
+                                    }}
                                 >
-                                    {item.msg}
+                                    {item.first}
                                 </li>
                             );
                         })}
@@ -153,7 +142,16 @@ class Search extends Component {
                                     )}
                                 >
                                     <div className="songRight">
-                                        {item.songName}
+                                        {item.name}
+                                        <div className="songArtist">
+                                        {
+                                                    item.artists ?
+                                                        item.artists.map(item => {
+                                                        return <span key={item.id}>{item.name}</span>
+                                                        })
+                                                        : ''
+                                                }-{item.name}
+                                        </div>
                                         <span className="icon_play"></span>
                                     </div>
                                 </li>

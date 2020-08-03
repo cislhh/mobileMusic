@@ -37,22 +37,40 @@
     line-height: 1.1rem;
 
 }
-
-.songList .songLeft {
+.rank .songList:nth-child(1) .songLeft,
+.rank .songList:nth-child(2) .songLeft,
+.rank .songList:nth-child(3) .songLeft{
+    color: red;
+}
+.rank .songList .songLeft {
     width: 0.8rem;
     text-align: center;
 }
 
-.songList .songRight {
+.rank .songList .songRight {
     flex: 1;
     border-bottom: 1px solid #ccc;
     display: flex;
     justify-content: space-between;
     align-items: center;
-
+    font-size: 15px;
+    line-height: 15px;
+    white-space:nowrap;
+       overflow:hidden;
+       text-overflow:ellipsis;
+       position: relative;
 }
-
-.songList .songRight .icon_play {
+.rank .songList .songRight .songArtist{
+    font-size: 12px;
+    color: #888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: normal;
+    position: absolute;
+    bottom: 0.02rem;
+}
+.rank .songList .songRight .icon_play {
     background: url("../images/music_sprite.png") no-repeat;
     background-size: 3.32rem 1.94rem;
     display: inline-block;
