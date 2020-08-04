@@ -59,7 +59,13 @@ class Home extends Component {
     }
     //动态路由跳转方法
     goPlay(id,name) {
-        this.props.history.push(`/play?id=${id}&name=${name}`)
+        // this.props.history.push(`/play?id=${id}&name=${name}`)
+        this.props.history.push({
+            pathname:"/play",
+            state:{
+                id
+            }
+        })
     }
     render() {
         const { remdList, rankList } = this.state;
@@ -89,7 +95,7 @@ class Home extends Component {
                                     onClick={this.goPlay.bind(
                                         this,
                                         item.id,
-                                        item.songName
+                                        item.name
                                     )}
                                 >
                                     <div className="songRight">

@@ -19,7 +19,13 @@ class Search extends Component {
         this.get_search_hot();
     }
     goPlay(id, name) {
-        this.props.history.push(`/play?id=${id}&name=${name}`);
+        // this.props.history.push(`/play?id=${id}&name=${name}`);
+        this.props.history.push({
+            pathname:"/play",
+            state:{
+                id
+            }
+        })
     }
     //根据是否输入内容判断是否出现取消符号
     errorIco(e) {
@@ -40,7 +46,7 @@ class Search extends Component {
     errorClear() {
         this.setState({
             findMsg: "",
-            rankList: [],
+            rankList: []
         });
         this.error_ico.current.style.display = "none";
         this.find_input.current.value = "";
@@ -62,17 +68,16 @@ class Search extends Component {
     //封装一个搜索事件
     goSearch(keywords) {
         //给input赋值
-        this.find_input.current.value = keywords
+        this.find_input.current.value = keywords;
         //调取搜索接口
-        searchInfo({ keywords })
-            .then(res => {
-                if (res.code == 200) {
-                    console.log(res, '搜索结果')
-                    this.setState({
-                        rankList: res.result.songs
-                    })
-                }
-            })
+        searchInfo({ keywords }).then(res => {
+            if (res.code == 200) {
+                console.log(res, "搜索结果");
+                this.setState({
+                    rankList: res.result.songs
+                });
+            }
+        });
     }
     //获取热门搜索事件
     get_search_hot() {
@@ -111,13 +116,12 @@ class Search extends Component {
                 <div className="sea_hot" ref={this.sea_hot}>
                     <h6>热门搜索</h6>
                     <ul>
-                        {findText.map((item,si) => {
+                        {findText.map((item, si) => {
                             return (
                                 <li
                                     className="hot_tag"
                                     key={item.first}
-
-                                    onClick={()=>{
+                                    onClick={() => {
                                         this.findAdd(si);
                                         this.goSearch(item.first);
                                     }}
@@ -138,19 +142,22 @@ class Search extends Component {
                                     onClick={this.goPlay.bind(
                                         this,
                                         item.id,
-                                        item.songName
+                                        item.name
                                     )}
                                 >
                                     <div className="songRight">
                                         {item.name}
                                         <div className="songArtist">
-                                        {
-                                                    item.artists ?
-                                                        item.artists.map(item => {
-                                                        return <span key={item.id}>{item.name}</span>
-                                                        })
-                                                        : ''
-                                                }-{item.name}
+                                            {item.artists
+                                                ? item.artists.map(item => {
+                                                      return (
+                                                          <span key={item.id}>
+                                                              {item.name}
+                                                          </span>
+                                                      );
+                                                  })
+                                                : ""}
+                                            -{item.name}
                                         </div>
                                         <span className="icon_play"></span>
                                     </div>

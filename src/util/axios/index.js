@@ -34,3 +34,35 @@ export function searchInfo(params){
         params
     })
 }
+
+//封装歌单详情
+export function getPlayList(params){
+    return http.get('/playlist/detail',{
+        params
+    })
+}
+//封装一个歌单评论接口
+export function getPlayComment(params){
+    return http.get('/comment/playlist',{
+        params
+    })
+}
+
+//封装一个歌词接口
+export function getLyric(params){
+    return http.get('/lyric',{
+        params
+    })
+}
+//获取音乐 url
+export function getUrl(params){
+    return http.get('/song/url',{
+        params
+    })
+}
+//获取歌曲详情
+export function getSongDetail(params){
+    return http.get('/song/detail',{
+        params
+    })
+}

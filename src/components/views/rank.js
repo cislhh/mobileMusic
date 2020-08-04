@@ -49,7 +49,13 @@ class Rank extends Component {
     goPlay(id, name) {
         // console.log(this, "rank");
         //在props属性中有路由的属性方法
-        this.props.history.push(`/play?id=${id}&name=${name}`);
+        // this.props.history.push(`/play?id=${id}&name=${name}`);
+        this.props.history.push({
+            pathname:"/play",
+            state:{
+                id
+            }
+        })
     }
     render() {
         const { rankList, hotTime } = this.state;
@@ -70,7 +76,7 @@ class Rank extends Component {
                                 onClick={this.goPlay.bind(
                                     this,
                                     item.id,
-                                    item.songName
+                                    item.name
                                 )}
                             >
                                 <div className="songLeft">
