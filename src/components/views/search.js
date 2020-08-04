@@ -90,11 +90,19 @@ class Search extends Component {
         });
         // console.log(this.state.findText, '热门标签')
     }
+    //键盘事件
+    enter(e) {
+        if (e.keyCode === 13 && e.target.value != '') {
+            console.log(e.target.value)
+            //当用户输入回车的时候 要调取搜索接口
+            this.goSearch(e.target.value)
+        }
+    }
     render() {
         const { findText, rankList } = this.state;
         return (
             <div className="search">
-                <form className="sea_input">
+                <div className="sea_input">
                     <div className="sea_inputcover">
                         <i className="sea_fdico"></i>
                         <input
@@ -103,6 +111,7 @@ class Search extends Component {
                             className="sea_find"
                             ref={this.find_input}
                             onChange={this.errorIco.bind(this)}
+                            onKeyUp={this.enter.bind(this)}
                         />
                         <div className="sea_close">
                             <i
@@ -112,7 +121,7 @@ class Search extends Component {
                             ></i>
                         </div>
                     </div>
-                </form>
+                </div>
                 <div className="sea_hot" ref={this.sea_hot}>
                     <h6>热门搜索</h6>
                     <ul>

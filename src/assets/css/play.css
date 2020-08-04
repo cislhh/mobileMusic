@@ -64,11 +64,16 @@ h2{
     z-index: 0;
     border-radius: 50%;
 }
+.play .play_disc .imgTurn .songImg img{
+    width: 3rem;
+    height: 3rem;
 
+    border-radius: 50%;
+}
 .play .play_disc .btnPlay{
     width: 1.12rem;
     height: 1.12rem;
-    background: url("../images/play.png");
+    background-image: url("../images/play.png");
     background-size: contain;
     background-color: rgba(255, 255, 255, 0.2);
     border-radius: 50%;
@@ -81,12 +86,18 @@ h2{
     margin: auto;
     z-index: 3;
 }
-
+.play .play_disc .btnPlay audio{
+    position: fixed;
+    bottom: 0.4rem;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
 .play .play_songInfo{
     margin-top: 0.4rem;
     text-align: center;
     padding: 0 35px;
-    
+    /* overflow: auto; */
 }
 .play .play_songInfo .title{
     line-height: 1.1;
@@ -96,10 +107,40 @@ h2{
     text-overflow: ellipsis;
 }
 .play .play_songInfo .info{
-    height: 86px;
-    font-size: 16px;
+    /* position: relative;
+    margin-top: 14px;
+    height: 130px;
+    overflow: auto; */
+    height: 2.4rem;
     line-height: 1.5;
-    overflow: hidden;
-    text-align: center;
+    overflow: auto;
     color: #fefefe;
+    margin-top: 0.4rem;
+    transform: translateY(0px)
 }
+.play .play_songInfo .info .info_move{
+    /* height: 120px;
+    text-align: center;
+    width: 100%;
+    transition: 0.5s; */
+    transition: 0.5s;
+    text-align: center;
+    width: 100%;
+}
+::-webkit-scrollbar {
+    display: none;
+  }
+.play .play_songInfo .info p{
+    font-size: 16px;
+    color: #fff;
+    height: 31px;
+    line-height: 31px;
+    overflow: hidden;
+    margin-bottom: 0;
+  }
+
+
+  .active {
+    color: red !important;
+    font-weight: 600;
+  }

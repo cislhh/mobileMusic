@@ -1,20 +1,18 @@
 import React, { Component } from "react";
 import "../../assets/css/play.css";
-import qs from "querystring";
+import $ from "jquery";
 import axios from "axios";
 import { getLyric, getUrl, getSongDetail } from "../../util/axios";
 class Play extends Component {
     constructor(props) {
         super(props);
-        // console.log(this)
+
         this.state = {
-            // music: require("../../assets/music/米津玄師 - LOSER.mp3"),
-            // musicUrl:
-            //     "http://m701.music.126.net/20200801145057/a347073fa26933ac846a500764a964fb/jdyyaac/535b/0208/5358/d1223043d95be596c846d23417cee968.m4a",
             songUrl: "",
             lyric: "",
             songDetail: "",
-            songBg:"",
+            songBg: "",
+            playTime: "00.00",
 
             flag: false,
             circle_num: 0,
@@ -23,12 +21,11 @@ class Play extends Component {
         };
 
         this.audio = React.createRef();
+        this.btnPlay = React.createRef();
         this.imgTurn = React.createRef();
     }
     componentDidMount() {
-        console.log(this.state.flag)
         this.goPlay();
-        // console.log(this.props.location.state.id)
         axios
             .all([
                 getLyric({ id: this.props.location.state.id }),
@@ -37,13 +34,45 @@ class Play extends Component {
             ])
             .then(
                 axios.spread((lyric, songUrl, songDetail) => {
-                    console.log(lyric, "歌词");
-                    console.log(songUrl, "音乐地址");
-                    console.log(songDetail, "songDetail");
                     if (lyric.code === 200) {
-                        this.setState({
-                            lyric: lyric.lrc.lyric
+                        let obj = {};
+                        let lyricInfo = lyric.lrc.lyric;
+                        //创建一个去除数组[]的正则
+                        let reg = /\[(.*?)](.*)/g;
+                        // console.log(lyricInfo);
+                        //把字符串的每一处[]符号 都替换掉
+                        lyricInfo.replace(reg, (a, b, c) => {
+                            b = b.slice(0, 5);
+                            obj[b] = c;
                         });
+                        console.log(obj);
+
+                        this.setState(
+                            {
+                                lyric: obj
+                            },
+                            () => {
+                                let audio = this.audio.current;
+                                audio.ontimeupdate = () => {
+                                    //currentTime 当前正在播放的时间
+                                    // console.log(audio.currentTime,"我正在播放")
+                                    let nowTime = this.tranTime(
+                                        audio.currentTime
+                                    );
+                                    if (nowTime in this.state.lyric) {
+                                        this.setState(
+                                            {
+                                                playTime: nowTime
+                                            },
+                                            () => {
+                                                //歌词滚动
+                                                this.moveLyric();
+                                            }
+                                        );
+                                    }
+                                };
+                            }
+                        );
                     }
                     if (songUrl.code === 200) {
                         this.setState({
@@ -51,25 +80,55 @@ class Play extends Component {
                         });
                     }
                     if (songDetail.code === 200) {
+                        console.log(songDetail)
                         this.setState({
                             songDetail: songDetail.songs[0],
-                            songBg:songDetail.songs[0].al.picUrl
+                            songBg: songDetail.songs[0].al.picUrl
                         });
                     }
                 })
             );
+    }
+    //封装一个时间转化的事件
+    tranTime(timer) {
+        let minute = (Math.floor(timer / 60) + "").padStart(2, "0");
+        let second = (Math.floor(timer % 60) + "").padStart(2, "0");
+        return `${minute}:${second}`;
+    }
+    //歌词滚动事件
+    moveLyric() {
+        //取出带active的p标签
+        let active = document.getElementsByClassName("active")[0];
+        console.log(active.offsetTop)
+        //查找出active索引
+        let index = $(".info_move")
+            .children()
+            .index(active);
+        let offset = 31;
+        if (active) {
+            if (active.offsetTop > offset) {
+                //移动Y 轴 
+                $(".info_move").css("transform", `translateY(-${index * offset}px)`);
+            }
+        }
     }
     //点击碟片区域可以控制音乐的播放
     goPlay() {
         if (this.state.flag === true) {
             clearInterval(this.state.timer);
             this.audio.current.pause();
+            this.btnPlay.current.style.backgroundImage = `url(${require("../../assets/images/play.png")})`;
             this.setState({
                 flag: false
             });
         } else {
             this.turnDisc();
-            this.audio.current.play();
+            // .play()是一个promise，直接播放会返回一个不阻止页面的错误，用catch捕捉一下即可
+            this.audio.current.play().catch(error => {
+                console.log("not");
+            });
+
+            this.btnPlay.current.style.backgroundImage = `url()`;
             this.setState({
                 flag: true
             });
@@ -80,6 +139,11 @@ class Play extends Component {
         clearInterval(this.state.timer);
         this.state.timer = setInterval(() => {
             this.imgTurn.current.style.transform = `rotate(${this.state.imgTurnDeg}deg)`;
+            if (this.state.imgTurnDeg >= 360) {
+                this.setState({
+                    imgTurnDeg: 0
+                });
+            }
             this.setState({
                 imgTurnDeg: (this.state.imgTurnDeg += 1)
             });
@@ -97,12 +161,15 @@ class Play extends Component {
         this.props.history.push(`/index/home`);
     }
     render() {
-        const { lyric, songUrl, songDetail,songBg } = this.state;
+        const { lyric, songUrl, songDetail, songBg, playTime } = this.state;
         return (
             <div>
-                <div className="play_bd" style={{
-                backgroundImage:`url(${songBg})`,
-            }}></div>
+                <div
+                    className="play_bd"
+                    style={{
+                        backgroundImage: `url(${songBg})`
+                    }}
+                ></div>
                 <div className="play" onClick={this.goPlay.bind(this)}>
                     <h6 onClick={this.goHome.bind(this)}>U音乐</h6>
                     <div className="play_disc">
@@ -123,11 +190,12 @@ class Play extends Component {
                                 )}
                             </div>
                         </div>
-                        <div className="btnPlay">
+                        <div className="btnPlay" ref={this.btnPlay}>
                             <audio
                                 ref={this.audio}
                                 autoPlay
                                 src={songUrl}
+                                controls
                             ></audio>
                         </div>
                     </div>
@@ -135,13 +203,28 @@ class Play extends Component {
                         <div className="title">
                             {songDetail.al ? (
                                 <div>
-                                    {songDetail.al.name}-{songDetail.ar[0].name}
+                                    {songDetail.name}-{songDetail.ar[0].name}
                                 </div>
                             ) : (
                                 ""
                             )}
                         </div>
-                        <div className="info">{lyric}</div>
+                        <div className="info">
+                            <div className="info_move">
+                                {Object.entries(lyric).map((item, i) => {
+                                    //当播放器时间和歌词的时间匹配的时候 加高亮
+                                    if (playTime == item[0]) {
+                                        return (
+                                            <p key={i} className="active">
+                                                {item[1]}
+                                            </p>
+                                        );
+                                    } else {
+                                        return <p key={i}>{item[1]}</p>;
+                                    }
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
